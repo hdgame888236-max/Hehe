@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "vapemace",
+  "version": "${version}",
+  "name": "VapeMace PvP Client",
+  "description": "Peak HT2-style Zero-Lag Humanized Mace PvP Automation, Telemetry, and Anti-Cheat Bypass Suite for Minecraft 1.21.11",
+  "authors": ["VapeMaceDev"],
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.vapemace.client.VapeMaceClient"
+    ]
+  },
+  "mixins": [
+    "vapemace.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
