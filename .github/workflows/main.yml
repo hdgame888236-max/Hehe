@@ -1,3 +1,4 @@
+
 name: Build Project
 
 on:
@@ -7,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Java
@@ -16,24 +17,25 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Build
+      - name: Extract project ZIP
         run: |
-          ls -la
-          if [ -f gradlew ]; then
-            chmod +x gradlew
-            ./gradlew build
-          elif [ -f build.gradle ] || [ -f build.gradle.kts ]; then
-            gradle build
-          else
-            echo "Gradle project files not found in repository root"
+          unzip -o "vapemace-client-1.21.11-ultra-human (1).zip" -d extracted
+          find extracted -name build.gradle -print
+
+      - name: Build project
+        run: |
+          PROJECT_DIR=$(dirname "$(find extracted -name build.gradle | head -n 1)")
+          if [ -z "$PROJECT_DIR" ] || [ "$PROJECT_DIR" = "." ]; then
+            echo "Could not find build.gradle"
             exit 1
           fi
+          cd "$PROJECT_DIR"
+          gradle build
 
       - name: Upload JAR
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: built-jar
-          path: '**/build/libs/*.jar'
+          path: extracted/**/build/libs/*.jar
           if-no-files-found: error
-
