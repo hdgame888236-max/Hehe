@@ -1,0 +1,39 @@
+name: Build Project
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build
+        run: |
+          ls -la
+          if [ -f gradlew ]; then
+            chmod +x gradlew
+            ./gradlew build
+          elif [ -f build.gradle ] || [ -f build.gradle.kts ]; then
+            gradle build
+          else
+            echo "Gradle project files not found in repository root"
+            exit 1
+          fi
+
+      - name: Upload JAR
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-jar
+          path: '**/build/libs/*.jar'
+          if-no-files-found: error
+
